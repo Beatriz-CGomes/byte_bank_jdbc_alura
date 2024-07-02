@@ -39,7 +39,7 @@ public class BytebankApplication {
                         break;
                 }
             } catch (RegraDeNegocioException | SQLException e) {
-                System.out.println("Erro: " +e.getMessage());
+                System.out.println("Erro: " + e.getMessage());
                 System.out.println("Pressione qualquer tecla e de ENTER para voltar ao menu");
                 teclado.next();
             }

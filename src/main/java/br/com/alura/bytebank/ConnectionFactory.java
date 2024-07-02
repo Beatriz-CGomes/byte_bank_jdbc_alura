@@ -21,7 +21,7 @@ public class ConnectionFactory {
         config.setJdbcUrl("jdbc:mysql://localhost:3306/byte_bank");
         config.setUsername("root");
         config.setPassword("root");
-        config.setMaximumPoolSize(0);
+        config.setMaximumPoolSize(10);
 
         return new HikariDataSource(config);
     }

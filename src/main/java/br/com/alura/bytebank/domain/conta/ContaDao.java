@@ -20,6 +20,8 @@ public class ContaDao {
         this.conn = connection;
     }
 
+
+    //metado abrir uma conta
     public void salvar(DadosAberturaConta dadosDaConta) {
         var cliente = new Cliente(dadosDaConta.dadosCliente());
         var conta = new Conta(dadosDaConta.numero(), cliente);
@@ -44,6 +46,7 @@ public class ContaDao {
     }
 
 
+    //listar todas as contas
     public Set<Conta> listar() {
         Set<Conta> contas = new HashSet<>();
         String sql = "SELECT * FROM conta";
@@ -76,6 +79,61 @@ public class ContaDao {
         }
 
         return contas;
+    }
+
+    //listar conta por numero
+    public Conta listarPorNumero(Integer numero) {
+        String sql = "SELECT * FROM conta WHERE numero = ? ";
+
+        PreparedStatement ps;
+        ResultSet rs;
+        Conta conta = null;
+
+        try {
+
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, numero);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Integer numeroRecuperado = rs.getInt(1);
+                BigDecimal saldo = rs.getBigDecimal(2);
+                String nome = rs.getString(3);
+                String cpf = rs.getString(4);
+                String email = rs.getString(5);
+
+                DadosCadastroCliente dadosCadastroCliente = new DadosCadastroCliente(nome, cpf, email);
+                Cliente cliente = new Cliente(dadosCadastroCliente);
+                conta = new Conta(numeroRecuperado, saldo, cliente);
+            }
+            ps.close();
+            rs.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return conta;
+    }
+
+    //alterar valor da conta
+    public void alterar(Integer numero, BigDecimal valor) {
+        PreparedStatement ps;
+        String sql = "UPDATE conta SET saldo = ? WHERE numero = ?";
+
+        try {
+            ps = conn.prepareStatement(sql);
+
+            ps.setBigDecimal(1, valor);
+            ps.setInt(2, numero);
+
+            ps.execute();
+            ps.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
